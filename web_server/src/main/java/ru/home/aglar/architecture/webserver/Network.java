@@ -5,25 +5,23 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Network {
-    private RequestHandler handler;
+    private Logger logger;
 
-    public Network(RequestHandler handler) {
-        this.handler = handler;
+    public Network(Logger logger) {
+        this.logger = logger;
     }
 
     public void start() {
         try (
             ServerSocket serverSocket = new ServerSocket(9090)) {
-            System.out.println("Server started!");
+            logger.info("Server started!");
 
             while (true) {
                 Socket socket = serverSocket.accept();
-                System.out.println("New client connected!");
+                logger.info("New client connected!");
 
-                new Thread(() -> {
-                    handler.handleRequest(socket);
-                    System.out.println("Client disconnected!");
-                }).start();
+                RequestHandler handler = new RequestHandler(new SocketService(socket), logger);
+                new Thread(handler).start();
             }
         } catch (
                 IOException e) {
