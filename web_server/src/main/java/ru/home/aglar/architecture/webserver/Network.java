@@ -20,7 +20,10 @@ public class Network {
                 Socket socket = serverSocket.accept();
                 logger.info("New client connected!");
 
-                RequestHandler handler = new RequestHandler(new SocketService(socket), logger);
+                RequestParser parser = new RequestParserImpl();
+                ResponseSerializer serializer = new ResponseSerializerImpl();
+                RequestHandler handler = new RequestHandler(new SocketService(socket),
+                        parser, serializer, logger);
                 new Thread(handler).start();
             }
         } catch (
