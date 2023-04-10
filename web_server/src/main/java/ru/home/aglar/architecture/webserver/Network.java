@@ -26,7 +26,7 @@ public class Network {
 
                 RequestParser parser = new RequestParserImpl(config);
                 ResponseSerializer serializer = new ResponseSerializerImpl();
-                RequestHandler handler = new RequestHandler(new SocketService(socket),
+                RequestHandler handler = new RequestHandlerProxy(new SocketService(socket),
                         parser, serializer, logger);
                 new Thread(handler).start();
             }
