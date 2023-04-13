@@ -1,30 +1,27 @@
-package ru.home.aglar.architecture.webserver;
+package ru.home.aglar.architecture.webserver.handler;
+
+import ru.home.aglar.architecture.webserver.*;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class RequestHandlerImpl implements RequestHandler {
+public class RequestHandler implements Runnable {
     private final SocketService socketService;
-//    private final Logger logger;
+    private final Logger logger;
     private final RequestParser parser;
     private final ResponseSerializer serializer;
 
-    public RequestHandlerImpl(SocketService socketService, RequestParser parser, ResponseSerializer serializer) {//}, Logger logger) {
+    public RequestHandler(SocketService socketService, RequestParser parser, ResponseSerializer serializer, Logger logger) {//}, Logger logger) {
         this.socketService = socketService;
-//        this.logger = logger;
+        this.logger = logger;
         this.parser = parser;
         this.serializer = serializer;
     }
 
     @Override
     public void run() {
-        handle();
-    }
-
-    @Override
-    public void handle() {
         HttpRequest httpRequest = parser.parse(socketService.readRequest());
         Path path = Paths.get(httpRequest.getPath(), httpRequest.getBody());
         if (!Files.exists(path)) {
@@ -32,7 +29,7 @@ public class RequestHandlerImpl implements RequestHandler {
                     HttpResponse.HEADER_STANDARD, "<h1>Файл не найден!</h1>");
             socketService.writeResponse(serializer.serialize(httpResponse),
                     new StringReader(httpResponse.getBody()));
-            return;
+        return;
         }
 
         try {
@@ -42,5 +39,7 @@ public class RequestHandlerImpl implements RequestHandler {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        logger.info("Client disconnected!");
     }
 }

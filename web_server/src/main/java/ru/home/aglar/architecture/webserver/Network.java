@@ -1,6 +1,7 @@
 package ru.home.aglar.architecture.webserver;
 
 import ru.home.aglar.architecture.webserver.config.Config;
+import ru.home.aglar.architecture.webserver.handler.RequestHandler;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -26,7 +27,7 @@ public class Network {
 
                 RequestParser parser = new RequestParserImpl(config);
                 ResponseSerializer serializer = new ResponseSerializerImpl();
-                RequestHandler handler = new RequestHandlerProxy(new SocketService(socket),
+                RequestHandler handler = new RequestHandler(new SocketService(socket),
                         parser, serializer, logger);
                 new Thread(handler).start();
             }
