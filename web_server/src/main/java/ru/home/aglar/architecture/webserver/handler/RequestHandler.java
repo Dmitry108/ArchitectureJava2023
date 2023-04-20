@@ -1,10 +1,11 @@
-package ru.home.aglar.architecture.webserver;
+package ru.home.aglar.architecture.webserver.handler;
+
+import ru.home.aglar.architecture.webserver.*;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 
 public class RequestHandler implements Runnable {
     private final SocketService socketService;
@@ -12,7 +13,7 @@ public class RequestHandler implements Runnable {
     private final RequestParser parser;
     private final ResponseSerializer serializer;
 
-    public RequestHandler(SocketService socketService, RequestParser parser, ResponseSerializer serializer, Logger logger) {
+    public RequestHandler(SocketService socketService, RequestParser parser, ResponseSerializer serializer, Logger logger) {//}, Logger logger) {
         this.socketService = socketService;
         this.logger = logger;
         this.parser = parser;
@@ -28,7 +29,7 @@ public class RequestHandler implements Runnable {
                     HttpResponse.HEADER_STANDARD, "<h1>Файл не найден!</h1>");
             socketService.writeResponse(serializer.serialize(httpResponse),
                     new StringReader(httpResponse.getBody()));
-            return;
+        return;
         }
 
         try {
